@@ -5,7 +5,7 @@ import numpy as np
 from arsenal.maths import quick_fdcheck
 
 from matrix_tree import matrix_tree_theorem as mt
-from brute_force import brute_force as bf, enumerate_dtrees
+from brute_force import brute_force, enumerate_dtrees
 
 
 def test_enumerate_dtrees(N):
@@ -26,7 +26,8 @@ def test_mt_bf(A, r):
     the number of nodes so it should only be used on small graphs.
     """
 
-    [bf_lnz, bf_dr, bf_dA] = bf(A, r)
+    bf = brute_force(A, r)
+    [bf_lnz, bf_dr, bf_dA] = bf.lnz, bf.R, bf.M
     [mt_lnz, mt_dr, mt_dA] = mt(A, r)
 
     print()

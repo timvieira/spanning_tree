@@ -4,31 +4,46 @@ from arsenal.maths import logsumexp
 from itertools import product
 
 
-def brute_force(A, r):
-    "Brute-force computation of the log partition function and edge marginals."
-    [N,_] = A.shape
+class brute_force:
+    "Brute-force computation for spanning tree distrbutions."
 
-    def score(t):
-        [root, tree] = t
-        s = r[root]
+    def __init__(self, A, r):
+        [N,_] = A.shape
+        self.N = N; self.A = A; self.r = r
+
+        self.scores = {(root, tree): self.score(root, tree) for root, tree in self.domain()}
+        lnz = logsumexp(list(self.scores.values()))
+
+        R = np.zeros(N)       # root marginals
+        M = np.zeros((N,N))   # edges marginals
+        P = {}
+        for (root, tree), s in self.scores.items():
+            p = np.exp(s - lnz)
+            P[root, tree] = p
+            R[root] += p
+            for h,m in tree:
+                M[h,m] += p
+
+        self.P = P
+        self.lnz = lnz
+        self.R = R
+        self.M = M
+
+    def lprob(self, root, tree):
+        "Log-probability of a `tree` with a specific `root`."
+        return self.scores[root, tree] - self.lnz
+
+    def score(self, root, tree):
+        "Unnormalized log probability of a `tree` with a specific `root`."
+        s = self.r[root]
         for h,m in tree:
             assert m != root
-            s += A[h,m]
+            s += self.A[h,m]
         return s
 
-    scores = {t: score(t) for t in enumerate_dtrees(N)}
-
-    lnz = logsumexp(list(scores.values()))
-
-    R = np.zeros(N)
-    M = np.zeros((N,N))
-    for (root, tree), s in scores.items():
-        p = np.exp(s - lnz)
-        R[root] += p
-        for h,m in tree:
-            M[h,m] += p
-
-    return lnz, R, M
+    def domain(self):
+        "Enumerate the support of the probability distribution"
+        return enumerate_dtrees(self.N)
 
 
 def enumerate_dtrees(n):
