@@ -1,1 +1,1 @@
-from matrix_tree import matrix_tree_theorem
+from spanning_tree.matrix_tree import matrix_tree_theorem
