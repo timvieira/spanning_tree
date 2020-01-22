@@ -24,7 +24,7 @@ def matrix_tree_theorem(A, r):
     """
 
     # Numerical stability trick: We use an extension of the log-sum-exp and
-    # exp-normalize tricks to our log-det-exp setting. [I haven't never seen 
+    # exp-normalize tricks to our log-det-exp setting. [I haven't never seen
     # this trick elsewhere.]
     #
     # Note: The `exp` function below is point-wise exponential, not the matrix
@@ -42,6 +42,17 @@ def matrix_tree_theorem(A, r):
     #     = ∇ [ c*n + log(det(exp(A - c))) ]
     #     = exp(A - c)⁻ᵀ
     #
+    # Vector version of the trick: for any n-dimensional vector `c`,
+    #
+    #    log(det(diag(exp(c)) * exp(A - c)))
+    #     = log(product(exp(c)) * det(exp(A - c)))
+    #     = sum(c) + log(det(exp(A - c)))
+    #
+    # Although, it is a generalization of the scalar trick, I don't 
+    # think it makes much of a difference to have the extra parameters.
+    # Much like the log-sum-exp trick, the goal is only to avoid overflow 
+    # the scalar is enough to do that.
+
     c = max(r.max(), A.max())
 
     r = np.exp(r - c)
