@@ -86,7 +86,6 @@ def enumerate_dtrees(n):
     assert accepts == n ** (n-1)
 
 
-import networkx.algorithms.tree.recognition as R
 def is_arborescence(edges):
-    "Check if `edges` forms a tree."
-    return R.is_arborescence(nx.DiGraph(list(edges)))
+    "Check if `edges` forms an arborescence (a directed tree)."
+    return nx.algorithms.tree.recognition.is_arborescence(nx.DiGraph(list(edges)))
