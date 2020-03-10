@@ -78,7 +78,7 @@ def enumerate_dtrees(n):
 
             edges = [(h,m) for m, h in enumerate(A) if m != root and h != None]
 
-            if is_tree(edges):
+            if is_arborescence(edges):
                 accepts += 1
                 yield root, frozenset(edges)
 
@@ -86,11 +86,7 @@ def enumerate_dtrees(n):
     assert accepts == n ** (n-1)
 
 
-def is_tree(edges):
+import networkx.algorithms.tree.recognition as R
+def is_arborescence(edges):
     "Check if `edges` forms a tree."
-    try:
-        # Use networkx for cycle detection
-        list(nx.topological_sort(nx.DiGraph(list(edges))))
-    except nx.exception.NetworkXUnfeasible:
-        return False
-    return True
+    return R.is_arborescence(nx.DiGraph(list(edges)))
